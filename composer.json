@@ -1,5 +1,5 @@
 {
-    "name": "urb/xenforobridge",
+    "name": "matthewh/xenforobridge",
     "description": "Xenforo Bridge - Easy to use extendable bridge to use outside of your XenForo application all contained within a simple to use composer package",
     "keywords": ["laravel", "laravel5", "xenforo", "xenforo forum", "forum"],
     "type": "library",
@@ -7,6 +7,12 @@
         {
             "name": "George Barba",
             "email": "george@underratedbrilliance.com"
+        },
+        {
+            "name": "Matthew Hatcher",
+            "email": "hello@matthewh.in",
+            "homepage": "http://matthewh.in",
+            "role": "Developer"
         }
     ],
     "require": {
