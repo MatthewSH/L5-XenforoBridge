@@ -1,45 +1,44 @@
-<?php namespace XenforoBridge;
+<?php
 
-/**
+namespace XenforoBridge;
+
+/*
  * Contracts and Exceptions
  */
+use XenForo_Application;
+use XenForo_Autoloader;
 use XenForo_Model;
-use XenforoBridge\Contracts\TemplateInterface;
-use XenforoBridge\Contracts\VisitorInterface;
-use XenforoBridge\Contracts\UserInterface;
-use XenforoBridge\Exceptions\XenforoAutoloaderException;
-
-/**
+use XenForo_Options;
+use XenForo_Session;
+/*
  * Default XenforoBridge Implementations
  */
-use XenforoBridge\Template\Template;
-use XenforoBridge\Visitor\Visitor;
-use XenforoBridge\User\User;
-
-/**
+use XenforoBridge\Contracts\TemplateInterface;
+use XenforoBridge\Contracts\UserInterface;
+use XenforoBridge\Contracts\VisitorInterface;
+/*
  * Required XenForo Classes
  */
-use XenForo_Autoloader;
-use XenForo_Application;
-use XenForo_Session;
-use XenForo_Options;
-
+use XenforoBridge\Exceptions\XenforoAutoloaderException;
+use XenforoBridge\Template\Template;
+use XenforoBridge\User\User;
+use XenforoBridge\Visitor\Visitor;
 
 class XenforoBridge
 {
     /**
-     * Xenforo Option Id for the boards base url
+     * Xenforo Option Id for the boards base url.
      */
     const XENFORO_OPTION_BASE_URL = 'boardUrl';
 
     /**
-     * Default language id for Xenforo
+     * Default language id for Xenforo.
      */
     const XENFOROBRIDGE_DEFAULT_LANGUAGE_ID = 1;
 
     /**
      * Absolute Path to Xenforo Directory
-     * (ex. /home/username/www/forums/ )
+     * (ex. /home/username/www/forums/ ).
      *
      * @var string
      */
@@ -47,7 +46,7 @@ class XenforoBridge
 
     /**
      * Base Url to Xenforo Application
-     * (ex. http://example.com/forums | http://example.com)
+     * (ex. http://example.com/forums | http://example.com).
      *
      * @var string
      */
@@ -74,10 +73,11 @@ class XenforoBridge
     protected $user;
 
     /**
-     * Bootstrap XenforoBridge
+     * Bootstrap XenforoBridge.
      *
      * @param $xenforoDirectoryPath
      * @param null|string $xenforoBaseUrl
+     *
      * @throws XenforoAutoloaderException
      */
     public function __construct($xenforoDirectoryPath, $xenforoBaseUrl = null)
@@ -95,7 +95,7 @@ class XenforoBridge
     }
 
     /**
-     * Set Xenforo Base Url
+     * Set Xenforo Base Url.
      *
      * @param null|string $url
      */
@@ -105,15 +105,15 @@ class XenforoBridge
     }
 
     /**
-     * Retrieve Xenforo Application base url from Xenforo itself if none is supplied
+     * Retrieve Xenforo Application base url from Xenforo itself if none is supplied.
      *
      * @param null|string $url
+     *
      * @return mixed|null|string
      */
     public function retrieveXenforoBaseUrl($url = null)
     {
-        if(!is_null($url))
-        {
+        if (!is_null($url)) {
             return $url;
         }
 
@@ -125,44 +125,46 @@ class XenforoBridge
      */
     public function getXenforoBaseUrl()
     {
-        if(!$this->xenforoBaseUrl)
-        {
+        if (!$this->xenforoBaseUrl) {
             $this->xenforoBaseUrl = $this->retrieveXenforoBaseUrl();
         }
 
         return $this->xenforoBaseUrl;
     }
+
     /**
-     * Bootstrap Xenforo Application and Start a Public Session
+     * Bootstrap Xenforo Application and Start a Public Session.
      *
      * @param string $directoryPath
      */
     protected function bootstrapXenforo($directoryPath)
     {
-        XenForo_Autoloader::getInstance()->setupAutoloader($directoryPath .'/library');
-        XenForo_Application::initialize($directoryPath . '/library', $directoryPath);
+        XenForo_Autoloader::getInstance()->setupAutoloader($directoryPath.'/library');
+        XenForo_Application::initialize($directoryPath.'/library', $directoryPath);
         XenForo_Session::startPublicSession();
     }
 
     /**
-     * Get all Xenforo Options
+     * Get all Xenforo Options.
+     *
+     * @throws \Zend_Exception
      *
      * @return mixed|XenForo_Options
-     * @throws \Zend_Exception
      */
     public function getXenforoOptions()
     {
-        if(!$this->xenforoOptions instanceof XenForo_Options)
-        {
+        if (!$this->xenforoOptions instanceof XenForo_Options) {
             $this->xenforoOptions = XenForo_Application::get('options');
         }
+
         return $this->xenforoOptions;
     }
 
     /**
-     * Get Xenforo Option by id
+     * Get Xenforo Option by id.
      *
      * @param string $id
+     *
      * @return mixed|null
      */
     public function getXenforoOptionById($id)
@@ -175,38 +177,38 @@ class XenforoBridge
      * unable to find or load.
      *
      * @param string $xenforoDirectory - Full path to Xenforo Directory
-     * @return bool
+     *
      * @throws XenforoAutoloaderException
+     *
+     * @return bool
      */
-	protected function loadXenAutoloader($xenforoDirectory)
-	{
-		$path = $xenforoDirectory. '/library/XenForo/Autoloader.php';
+    protected function loadXenAutoloader($xenforoDirectory)
+    {
+        $path = $xenforoDirectory.'/library/XenForo/Autoloader.php';
 
-		$autoloader = include_once($path);
+        $autoloader = include_once $path;
 
-		if(!$autoloader)
-		{
-			throw new XenforoAutoloaderException('Could not load XenForo_Autoloader.php check path');
-		}
-	}
+        if (!$autoloader) {
+            throw new XenforoAutoloaderException('Could not load XenForo_Autoloader.php check path');
+        }
+    }
 
     /**
-     * Retrieve Visitor Class
+     * Retrieve Visitor Class.
      *
      * @return VisitorInterface
      */
     public function retrieveVisitor()
     {
-        if(!$this->visitor instanceof VisitorInterface)
-        {
-            $this->setVisitor(new Visitor);
+        if (!$this->visitor instanceof VisitorInterface) {
+            $this->setVisitor(new Visitor());
         }
 
         return $this->visitor;
     }
 
     /**
-     * Set a new Visitor implementation
+     * Set a new Visitor implementation.
      *
      * @param VisitorInterface $visitor
      */
@@ -216,7 +218,7 @@ class XenforoBridge
     }
 
     /**
-     * Gets singleton instance of Xenforo_Visitor
+     * Gets singleton instance of Xenforo_Visitor.
      *
      * @return \XenForo_Visitor
      */
@@ -226,75 +228,76 @@ class XenforoBridge
     }
 
     /**
-     * Checks if current visitor is banned
+     * Checks if current visitor is banned.
      *
-     * @return boolean
+     * @return bool
      */
     public function isBanned()
     {
-        return (bool)$this->retrieveVisitor()->isBanned();
+        return (bool) $this->retrieveVisitor()->isBanned();
     }
 
     /**
-     * Checks if current visitor is an Admin
+     * Checks if current visitor is an Admin.
      *
-     * @return boolean
+     * @return bool
      */
-	public function isAdmin()
-	{
-		return $this->retrieveVisitor()->isAdmin();
-	}
+    public function isAdmin()
+    {
+        return $this->retrieveVisitor()->isAdmin();
+    }
 
     /**
-     * Checks if visitor is a Super Admin
+     * Checks if visitor is a Super Admin.
      *
-     * @return boolean
+     * @return bool
      */
-	public function isSuperAdmin()
-	{
-		return $this->retrieveVisitor()->isSuperAdmin();
-	}
+    public function isSuperAdmin()
+    {
+        return $this->retrieveVisitor()->isSuperAdmin();
+    }
 
     /**
-     * Checks if visitor is currently logged in
+     * Checks if visitor is currently logged in.
      *
-     * @return boolean
+     * @return bool
      */
-	public function isLoggedIn()
-	{
-		return $this->retrieveVisitor()->isLoggedIn();
-	}
+    public function isLoggedIn()
+    {
+        return $this->retrieveVisitor()->isLoggedIn();
+    }
 
     /**
-     * Retrieve the current Visitors User id
+     * Retrieve the current Visitors User id.
      *
      * @return mixed
      */
     public function getVisitorUserId()
     {
-       return $this->getVisitor()->getUserId();
-    }
-    /**
-     * Checks if visitor has a particular permission
-     *
-     * @param $group - permission group
-     * @param $permission - permission
-     * @return mixed
-     */
-    public function hasPermission($group,$permission)
-    {
-        return $this->retrieveVisitor()->hasPermission($group,$permission);
+        return $this->getVisitor()->getUserId();
     }
 
     /**
-     * Retrieve Template set default implementation if one is not set already
+     * Checks if visitor has a particular permission.
+     *
+     * @param $group - permission group
+     * @param $permission - permission
+     *
+     * @return mixed
+     */
+    public function hasPermission($group, $permission)
+    {
+        return $this->retrieveVisitor()->hasPermission($group, $permission);
+    }
+
+    /**
+     * Retrieve Template set default implementation if one is not set already.
      *
      * @return TemplateInterface
      */
     public function retrieveTemplate()
     {
-        if(!$this->template instanceof TemplateInterface)
-        {
+        if (!$this->template instanceof TemplateInterface) {
             $this->setTemplate(new Template($this->getXenforoBaseUrl()));
         }
 
@@ -302,7 +305,7 @@ class XenforoBridge
     }
 
     /**
-     * Set Template
+     * Set Template.
      *
      * @param TemplateInterface $template
      */
@@ -312,7 +315,7 @@ class XenforoBridge
     }
 
     /**
-     * Get current implementation of Template
+     * Get current implementation of Template.
      *
      * @return TemplateInterface
      */
@@ -322,40 +325,40 @@ class XenforoBridge
     }
 
     /**
-     * Render a Xenforo Template
+     * Render a Xenforo Template.
      *
      * @todo simplify method signature reverse the order of content parameter
      *
-     * @param string $name - template_id
+     * @param string $name    - template_id
      * @param string $content - this will override the entire content area of the template
-     * @param array $params - parameters pasted to the template renderer
+     * @param array  $params  - parameters pasted to the template renderer
+     *
      * @return mixed
      */
-	public function renderTemplate( $name    = 'PAGE_CONTAINER',
-									$content = '',
-									$params  = array(),
+    public function renderTemplate($name = 'PAGE_CONTAINER',
+                                    $content = '',
+                                    $params = [],
                                     $container = Template::XENFORO_DEFAULT_CONTAINER)
-	{
-		return $this->getTemplate()->renderTemplate($name,$content,$params,$container);
-	}
+    {
+        return $this->getTemplate()->renderTemplate($name, $content, $params, $container);
+    }
 
     /**
-     * Return current implementation or set Default User
+     * Return current implementation or set Default User.
      *
      * @return UserInterface
      */
     public function retrieveUser()
     {
-        if(!$this->user instanceof UserInterface)
-        {
-            $this->setUser(new User);
+        if (!$this->user instanceof UserInterface) {
+            $this->setUser(new User());
         }
 
         return $this->user;
     }
 
     /**
-     * Set current implementation of User
+     * Set current implementation of User.
      *
      * @param UserInterface $user
      */
@@ -365,7 +368,7 @@ class XenforoBridge
     }
 
     /**
-     * Return current User implementation
+     * Return current User implementation.
      *
      * @return UserInterface
      */
@@ -375,63 +378,64 @@ class XenforoBridge
     }
 
     /**
-     * Find User by Id
+     * Find User by Id.
      *
      * @param $id
+     *
      * @return array
      */
-	public function getUserById($id)
-	{
-		return $this->getUser()->getUserById($id);
-	}
-
-	/**
-	 * Retrieve Xenforo User by Email
-	 *
-	 * If no user is found returns empty array
-	 *
-	 * @param $email
-	 * @return array
-	 */
-	public function getUserByEmail($email)
-	{
-		return $this->getUser()->getUserByEmail($email);
-	}
+    public function getUserById($id)
+    {
+        return $this->getUser()->getUserById($id);
+    }
 
     /**
-     * Get Xenforo User by Username - if no user is found returns empty array
+     * Retrieve Xenforo User by Email.
+     *
+     * If no user is found returns empty array
+     *
+     * @param $email
+     *
+     * @return array
+     */
+    public function getUserByEmail($email)
+    {
+        return $this->getUser()->getUserByEmail($email);
+    }
+
+    /**
+     * Get Xenforo User by Username - if no user is found returns empty array.
      *
      * @param $name
+     *
      * @return array
      */
-	public function getUserByName($name)
-	{
-		return $this->getUser()->getUserByUsername($name);
-	}
-
+    public function getUserByName($name)
+    {
+        return $this->getUser()->getUserByUsername($name);
+    }
 
     /**
-     * Login and set user session to user id (No Validation is used on this method)
+     * Login and set user session to user id (No Validation is used on this method).
      *
-     * @param (int) $user
+     * @param (int)      $user
      * @param bool|false $remember
-     * @param bool|true $log
+     * @param bool|true  $log
+     *
      * @return mixed
      */
-    public function loginAsUser($user, $remember = false,$log = true)
+    public function loginAsUser($user, $remember = false, $log = true)
     {
         // Set Remember Cookie
-        if($remember)
-        {
+        if ($remember) {
             /* @var XenForo_Model_User */
             $this->getXenforoModel('XenForo_Model_User')->setUserRememberCookie($user);
         }
 
         //Log IP
-        if($log)
-        {
+        if ($log) {
             /* @var XenForo_Model_Ip */
-            $this->getXenforoModel('XenForo_Model_Ip')->logIp($user,'user',$user,'login');
+            $this->getXenforoModel('XenForo_Model_Ip')->logIp($user, 'user', $user, 'login');
         }
 
         $this->changeUserSession($user);
@@ -441,7 +445,7 @@ class XenforoBridge
 
     /**
      * Changes the users session to the corresponding user id
-     * use this method with caution
+     * use this method with caution.
      *
      * @param $userId
      */
@@ -456,8 +460,10 @@ class XenforoBridge
 
     /**
      * @param $model
-     * @return XenForo_Model
+     *
      * @throws \XenForo_Exception
+     *
+     * @return XenForo_Model
      */
     public function getXenforoModel($model)
     {
@@ -465,10 +471,11 @@ class XenforoBridge
     }
 
     /**
-     * Retrieves XenForo Session
+     * Retrieves XenForo Session.
+     *
+     * @throws \Zend_Exception
      *
      * @return mixed
-     * @throws \Zend_Exception
      */
     public function getSession()
     {
