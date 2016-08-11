@@ -1,8 +1,7 @@
-<?php
-
-namespace XenforoBridge\Contracts;
+<?php namespace XenforoBridge\Contracts;
 
 interface TemplateInterface
 {
+
     public function renderTemplate($name, $content, $params, $container);
 }

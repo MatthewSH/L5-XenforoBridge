@@ -1,9 +1,8 @@
-<?php
-
-namespace XenforoBridge\Contracts;
+<?php namespace XenforoBridge\Contracts;
 
 interface UserInterface
 {
+
     public function getUserById($id);
 
     public function getUserByUsername($name);

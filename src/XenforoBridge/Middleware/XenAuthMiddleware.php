@@ -1,24 +1,21 @@
-<?php
-
-namespace XenforoBridge\Middleware;
+<?php namespace XenforoBridge\Middleware;
 
 use Closure;
 use Config;
-use Redirect;
 use Session;
+use Redirect;
 use XenforoBridge\XenforoBridge;
 
-class XenAuthMiddleware
-{
+class XenAuthMiddleware {
+
     /**
-     * stores Xenforo Bridge class.
-     *
+     * stores Xenforo Bridge class
      * @var XenforoBridge\XenforoBridge
      */
     private $xenforo;
 
     /**
-     * Construct Middleware Class.
+     * Construct Middleware Class
      *
      * @param \XenforoBridge\XenforoBridge $xenforo
      */
@@ -30,21 +27,21 @@ class XenAuthMiddleware
     /**
      * Run the request filter.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         $xenBaseUrl = config('xenforobridge.xenforo_base_url_path');
 
-        if (!$this->xenforo->isLoggedIn() and !$this->xenforo->isBanned()) {
+        if(!$this->xenforo->isLoggedIn() AND ! $this->xenforo->isBanned())
+        {
             Session::put('loginRedirect', $request->url());
-
             return Redirect::to($xenBaseUrl.'login');
         }
 
         return $next($request);
     }
+
 }

@@ -1,9 +1,8 @@
-<?php
-
-namespace XenforoBridge\Contracts;
+<?php namespace XenforoBridge\Contracts;
 
 interface VisitorInterface
 {
+
     public function getCurrentVisitor();
 
     public function isBanned();
